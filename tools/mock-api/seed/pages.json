@@ -1,0 +1,85 @@
+{
+  "$comment": "Loaded when tools/mock-api/data/pages.json does not exist yet. The component tree is GrapesJS component JSON (the root's children). Translatable texts are stored as one JSON object string keyed by locale inside the attribute. The attribute names used here (text, level, href) are placeholders: the block library defines the real trait names, so this seed only has to parse, not to render.",
+  "items": [
+    {
+      "id": 1,
+      "slug": "about",
+      "status": "published",
+      "title": { "en": "About us", "fa": "درباره ما" },
+      "seo": {
+        "description": {
+          "en": "Who we are and what we build.",
+          "fa": "ما که هستیم و چه می‌سازیم."
+        },
+        "image": null
+      },
+      "draft": {
+        "components": [
+          {
+            "type": "section",
+            "attributes": { "id": "about-intro" },
+            "components": [
+              {
+                "type": "heading",
+                "attributes": {
+                  "level": "1",
+                  "text": "{\"en\":\"About us\",\"fa\":\"درباره ما\"}"
+                }
+              },
+              {
+                "type": "text",
+                "attributes": {
+                  "text": "{\"en\":\"We are a small team building tools that help people publish pages without writing code.\",\"fa\":\"ما تیم کوچکی هستیم که ابزارهایی می‌سازیم تا افراد بدون نوشتن کد صفحه منتشر کنند.\"}"
+                }
+              },
+              {
+                "type": "button",
+                "attributes": {
+                  "href": "/contact",
+                  "text": "{\"en\":\"Get in touch\",\"fa\":\"با ما در تماس باشید\"}"
+                }
+              }
+            ]
+          }
+        ],
+        "styles": [],
+        "css": ""
+      },
+      "published": {
+        "components": [
+          {
+            "type": "section",
+            "attributes": { "id": "about-intro" },
+            "components": [
+              {
+                "type": "heading",
+                "attributes": {
+                  "level": "1",
+                  "text": "{\"en\":\"About us\",\"fa\":\"درباره ما\"}"
+                }
+              },
+              {
+                "type": "text",
+                "attributes": {
+                  "text": "{\"en\":\"We are a small team building tools that help people publish pages without writing code.\",\"fa\":\"ما تیم کوچکی هستیم که ابزارهایی می‌سازیم تا افراد بدون نوشتن کد صفحه منتشر کنند.\"}"
+                }
+              },
+              {
+                "type": "button",
+                "attributes": {
+                  "href": "/contact",
+                  "text": "{\"en\":\"Get in touch\",\"fa\":\"با ما در تماس باشید\"}"
+                }
+              }
+            ]
+          }
+        ],
+        "styles": [],
+        "css": ""
+      },
+      "published_at": "2026-01-15T09:00:00.000Z",
+      "created_at": "2026-01-15T08:30:00.000Z",
+      "updated_at": "2026-01-15T09:00:00.000Z"
+    }
+  ]
+}

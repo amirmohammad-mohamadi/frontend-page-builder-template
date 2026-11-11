@@ -16,7 +16,7 @@ export const env = createEnv(
     NEXT_PUBLIC_SITE_URL: z.url().default("http://localhost:3000"),
     WEB_PROXY_PREFIXES: z
       .string()
-      .default("/api/v1/me,/api/v1/examples")
+      .default("/api/v1/me,/api/v1/examples,/api/v1/pages")
       .transform((value) =>
         value
           .split(",")

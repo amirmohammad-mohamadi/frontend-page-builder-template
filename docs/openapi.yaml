@@ -1,0 +1,532 @@
+openapi: 3.1.0
+info:
+  title: Page builder API
+  version: 1.0.0
+  description: |
+    The routes a backend implements for the page builder: builder pages with a
+    draft and a published copy, and the media library. Shapes match the Zod
+    schemas in `libs/dtos` (page.dto.ts, media.dto.ts). Answers may be wrapped
+    in `{ "data": ... }`; the frontend's backend adapter unwraps them.
+servers:
+  - url: http://localhost:4000
+    description: the bundled mock API (`npm run mock-api`)
+tags:
+  - name: pages-admin
+    description: Operator routes; Bearer token of an operator (sent through the admin app's BFF proxy).
+  - name: pages-public
+    description: Read routes for the web app.
+  - name: media
+    description: The media library; Bearer token of an operator.
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/v1/admin/pages:
+    get:
+      tags: [pages-admin]
+      summary: List pages
+      operationId: listPages
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: search
+          in: query
+          description: Matches the slug and every title translation.
+          schema: { type: string, maxLength: 200 }
+        - name: status
+          in: query
+          schema: { $ref: "#/components/schemas/PageStatus" }
+        - name: sort
+          in: query
+          schema: { type: string, maxLength: 100 }
+        - name: direction
+          in: query
+          schema: { type: string, enum: [asc, desc] }
+      responses:
+        "200":
+          description: A page of pages.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Page" }
+                  meta: { $ref: "#/components/schemas/PaginationMeta" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [pages-admin]
+      summary: Create a draft page
+      operationId: createPage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreatePage" }
+      responses:
+        "201":
+          description: The new page, status `draft`, with an empty draft tree and no published copy.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PageEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /api/v1/admin/pages/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      tags: [pages-admin]
+      summary: Read a page with its draft and published copy
+      operationId: getPage
+      responses:
+        "200":
+          description: The page.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PageEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      tags: [pages-admin]
+      summary: Save the slug, title, SEO fields or the draft
+      description: Never changes `published`; visitors keep seeing the last published copy until the page is published again.
+      operationId: updatePage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdatePage" }
+      responses:
+        "200":
+          description: The saved page.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PageEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+    delete:
+      tags: [pages-admin]
+      summary: Delete a page
+      operationId: deletePage
+      responses:
+        "204": { description: Deleted. }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /api/v1/admin/pages/{id}/publish:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    post:
+      tags: [pages-admin]
+      summary: Publish the draft
+      description: Copies `draft` into `published` verbatim, sets `published_at` to now and `status` to `published`.
+      operationId: publishPage
+      responses:
+        "200":
+          description: The page after publishing.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PageEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /api/v1/admin/pages/{id}/unpublish:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    post:
+      tags: [pages-admin]
+      summary: Take the page offline
+      description: Clears `published` and `published_at` and sets `status` to `draft`; the draft is kept.
+      operationId: unpublishPage
+      responses:
+        "200":
+          description: The page after unpublishing.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PageEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /api/v1/pages/{slug}:
+    get:
+      tags: [pages-public]
+      summary: Read a published page by slug
+      description: |
+        Public. The slug may contain `/`; it is the rest of the path. Answers 404
+        while the page has no published copy. The answer never exposes
+        unpublished work: `draft` mirrors `published`.
+      operationId: getPageBySlug
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/Slug"
+      responses:
+        "200":
+          description: The published page.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PageEnvelope" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /api/v1/pages/{slug}/preview:
+    get:
+      tags: [pages-public]
+      summary: Read a page with its draft, for a signed-in operator's preview
+      description: Needs any valid Bearer token (the web app's BFF proxy adds it). Answers whatever the status.
+      operationId: getPagePreview
+      parameters:
+        - $ref: "#/components/parameters/Slug"
+      responses:
+        "200":
+          description: The page, draft included.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PageEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /api/v1/admin/media:
+    get:
+      tags: [media]
+      summary: List media assets
+      operationId: listMedia
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: search
+          in: query
+          description: Matches the display name.
+          schema: { type: string, maxLength: 200 }
+        - name: sort
+          in: query
+          schema: { type: string, maxLength: 100 }
+        - name: direction
+          in: query
+          schema: { type: string, enum: [asc, desc] }
+      responses:
+        "200":
+          description: A page of assets.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/MediaAsset" }
+                  meta: { $ref: "#/components/schemas/PaginationMeta" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [media]
+      summary: Upload a file
+      operationId: uploadMedia
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file bytes, with a filename.
+                name:
+                  type: string
+                  maxLength: 200
+                  description: Display name; defaults to the file name.
+            encoding:
+              file:
+                contentType: image/*, video/*, application/pdf
+      responses:
+        "201":
+          description: The stored asset with its public URL.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MediaAssetEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "413": { description: The file is larger than the server accepts. }
+        "415": { description: The body is not `multipart/form-data`. }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
+  /api/v1/admin/media/{id}:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    get:
+      tags: [media]
+      summary: Read an asset
+      operationId: getMedia
+      responses:
+        "200":
+          description: The asset.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MediaAssetEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      tags: [media]
+      summary: Save the alt texts or the display name
+      operationId: updateMedia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateMediaAsset" }
+      responses:
+        "200":
+          description: The saved asset.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MediaAssetEnvelope" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+    delete:
+      tags: [media]
+      summary: Delete an asset and its file
+      operationId: deleteMedia
+      responses:
+        "204": { description: Deleted. }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        oneOf:
+          - type: integer
+          - type: string
+    Slug:
+      name: slug
+      in: path
+      required: true
+      description: May contain `/`; each segment is URL-encoded separately.
+      schema:
+        type: string
+        pattern: "^[a-z0-9]+(?:[-/][a-z0-9]+)*$"
+        maxLength: 200
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    PerPage:
+      name: per_page
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+
+  responses:
+    Unauthenticated:
+      description: No valid Bearer token.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+    Forbidden:
+      description: The token does not belong to an operator.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+    NotFound:
+      description: Unknown id or slug (or, for the public route, an unpublished page).
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+    ValidationError:
+      description: The body failed validation; `errors` is keyed by field.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+
+  schemas:
+    Id:
+      oneOf:
+        - type: integer
+        - type: string
+
+    LocalizedText:
+      type: object
+      description: One text per locale, keyed by locale code.
+      additionalProperties: { type: string }
+      example: { en: "About us", fa: "درباره ما" }
+
+    PageStatus:
+      type: string
+      enum: [draft, published]
+
+    PageContent:
+      type: object
+      description: |
+        The editor's output: the GrapesJS component JSON tree (root children)
+        and CssRule JSON, stored opaquely, plus the CSS compiled from the rules.
+      required: [components, styles]
+      properties:
+        components:
+          type: array
+          items: {}
+        styles:
+          type: array
+          items: {}
+        css:
+          type: string
+
+    PageSeo:
+      type: object
+      properties:
+        description: { $ref: "#/components/schemas/LocalizedText" }
+        image:
+          type: [string, "null"]
+
+    Page:
+      type: object
+      required: [id, slug, status, title, draft, published, published_at]
+      properties:
+        id: { $ref: "#/components/schemas/Id" }
+        slug:
+          type: string
+          pattern: "^[a-z0-9]+(?:[-/][a-z0-9]+)*$"
+        status: { $ref: "#/components/schemas/PageStatus" }
+        title: { $ref: "#/components/schemas/LocalizedText" }
+        seo:
+          oneOf:
+            - $ref: "#/components/schemas/PageSeo"
+            - type: "null"
+        draft: { $ref: "#/components/schemas/PageContent" }
+        published:
+          oneOf:
+            - $ref: "#/components/schemas/PageContent"
+            - type: "null"
+        published_at:
+          type: [string, "null"]
+          format: date-time
+        created_at:
+          type: [string, "null"]
+          format: date-time
+        updated_at:
+          type: [string, "null"]
+          format: date-time
+
+    PageEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: "#/components/schemas/Page" }
+
+    CreatePage:
+      type: object
+      required: [slug, title]
+      properties:
+        slug:
+          type: string
+          pattern: "^[a-z0-9]+(?:[-/][a-z0-9]+)*$"
+          minLength: 1
+          maxLength: 200
+        title:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedText"
+          description: At least one non-empty translation.
+
+    UpdatePage:
+      type: object
+      properties:
+        slug:
+          type: string
+          pattern: "^[a-z0-9]+(?:[-/][a-z0-9]+)*$"
+          minLength: 1
+          maxLength: 200
+        title: { $ref: "#/components/schemas/LocalizedText" }
+        seo: { $ref: "#/components/schemas/PageSeo" }
+        draft: { $ref: "#/components/schemas/PageContent" }
+
+    MediaAsset:
+      type: object
+      required: [id, url, name, mime, size, alt]
+      properties:
+        id: { $ref: "#/components/schemas/Id" }
+        url:
+          type: string
+          format: uri
+          description: Absolute and reachable from the visitor's browser.
+        name: { type: string }
+        mime: { type: string }
+        size:
+          type: integer
+          minimum: 0
+          description: Bytes.
+        width:
+          type: [integer, "null"]
+        height:
+          type: [integer, "null"]
+        alt: { $ref: "#/components/schemas/LocalizedText" }
+        created_at:
+          type: [string, "null"]
+          format: date-time
+        updated_at:
+          type: [string, "null"]
+          format: date-time
+
+    MediaAssetEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: "#/components/schemas/MediaAsset" }
+
+    UpdateMediaAsset:
+      type: object
+      properties:
+        alt: { $ref: "#/components/schemas/LocalizedText" }
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+
+    PaginationMeta:
+      type: object
+      required: [current_page, last_page, per_page, total]
+      properties:
+        current_page: { type: integer }
+        last_page: { type: integer }
+        per_page: { type: integer }
+        total: { type: integer }
+
+    ApiError:
+      type: object
+      required: [message]
+      properties:
+        message: { type: string }
+        code:
+          oneOf:
+            - type: string
+            - type: integer
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }

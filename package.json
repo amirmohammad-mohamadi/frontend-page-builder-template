@@ -9,6 +9,7 @@
     "web": "nx run web:dev",
     "admin": "nx run admin:dev",
     "mock-api": "node tools/mock-api/server.mjs",
+    "mock-api:smoke": "node tools/mock-api/smoke.mjs",
     "dev": "nx run-many -t dev -p web,admin,mock-api",
     "build": "nx run-many -t build -p web,admin --configuration=production",
     "lint": "nx run-many -t lint",

@@ -14,3 +14,5 @@ export * from "./lib/shared/hooks";
 // Domains (browser-safe). Server-only auth plumbing is under "@services/auth/server".
 export * from "./lib/auth";
 export * from "./lib/example";
+export * from "./lib/page";
+export * from "./lib/media";

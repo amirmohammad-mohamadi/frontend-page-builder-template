@@ -69,6 +69,22 @@ describe("apiClient", () => {
     await expect(apiClient.delete("/api/v1/examples/1")).resolves.toBeUndefined();
   });
 
+  it("sends a multipart upload without a JSON content type and unwraps the answer", async () => {
+    fetchMock.mockResolvedValueOnce(answer(201, { data: { id: 9, name: "a.png" } }));
+    const form = new FormData();
+    form.append("file", new Blob([new Uint8Array([1, 2, 3])], { type: "image/png" }), "a.png");
+    await expect(apiClient.upload("/api/v1/admin/media", form)).resolves.toEqual({
+      id: 9,
+      name: "a.png",
+    });
+    const [, init] = fetchMock.mock.calls[0];
+    expect(init.method).toBe("POST");
+    expect(init.body).toBe(form);
+    expect(init.headers["Content-Type"]).toBeUndefined();
+    expect(init.headers.Accept).toBe("application/json");
+    expect(init.headers.Authorization).toBe("Bearer tok");
+  });
+
   it("aborts a server-side request after its deadline", async () => {
     fetchMock.mockImplementationOnce(
       (_url: string, init: RequestInit) =>
