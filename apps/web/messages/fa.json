@@ -20,6 +20,7 @@
   "nav": {
     "home": "خانه",
     "examples": "نمونه‌ها",
+    "about": "درباره ما",
     "account": "حساب کاربری",
     "signIn": "ورود",
     "signOut": "خروج",
@@ -86,6 +87,17 @@
     "pageOf": "صفحهٴ {page} از {total}",
     "previous": "قبلی",
     "next": "بعدی"
+  },
+  "pages": {
+    "previewTitle": "پیش‌نمایش پیش‌نویس",
+    "draftBadge": "پیش‌نویس",
+    "previewBanner": "پیش‌نمایش پیش‌نویس؛ عمومی نیست",
+    "previewOpenPublished": "باز کردن صفحهٴ منتشرشده",
+    "previewSignIn": "برای پیش‌نمایش این پیش‌نویس، به‌عنوان مدیر وارد شوید.",
+    "previewSignInAction": "ورود",
+    "notFound": "این صفحه وجود ندارد یا منتشر نشده است.",
+    "loadError": "صفحه بارگذاری نشد.",
+    "empty": "این صفحه هنوز محتوایی ندارد."
   },
   "errors": {
     "title": "مشکلی پیش آمد",

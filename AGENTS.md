@@ -29,7 +29,7 @@ ESLint enforces these edges (`no-restricted-imports` blocks in `eslint.config.mt
 - **Zod at every boundary**: form submit and request bodies validate with a `@dtos` schema; types are inferred, never hand-written twice.
 - **Named exports, `type` over `interface`, JSDoc on every exported function.**
 - **No `console.*` in shipped code**; report through `captureError` (`@utils`) and show failures through toasts or inline error states.
-- **Every page that fetches renders loading, error and empty states.** Route-level `loading.tsx` and `error.tsx` exist in both apps.
+- **Every page that fetches renders loading, error and empty states.** Route-level `error.tsx` boundaries exist in both apps; the web app has no `loading.tsx` above `[locale]` on purpose, because a shared Suspense boundary flushes the shell before `notFound()` runs and turns every 404 into a 200.
 - **Web app strings go through `t()`** (next-intl, `apps/web/messages/*.json`). **Admin strings live in `apps/admin/src/texts.ts`.**
 - **Logical CSS only** (`ms-*`, `pe-*`, `start-*`, `text-end`), so right-to-left works without overrides.
 - **Environment through `env.ts`** in each app (validated with `createEnv`); never scattered `process.env` reads. `NEXT_PUBLIC_*` only for truly public values.

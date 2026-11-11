@@ -20,6 +20,11 @@ export function SiteHeader() {
             {t("nav.examples")}
           </Link>
           {/* example-domain:end */}
+          {/* sample-page:start */}
+          <Link href="/about" className="text-muted-foreground hover:text-foreground">
+            {t("nav.about")}
+          </Link>
+          {/* sample-page:end */}
         </nav>
         <div className="ms-auto flex items-center gap-1">
           <LocaleSwitcher />

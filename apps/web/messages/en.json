@@ -20,6 +20,7 @@
   "nav": {
     "home": "Home",
     "examples": "Examples",
+    "about": "About",
     "account": "Account",
     "signIn": "Sign in",
     "signOut": "Sign out",
@@ -86,6 +87,17 @@
     "pageOf": "Page {page} of {total}",
     "previous": "Previous",
     "next": "Next"
+  },
+  "pages": {
+    "previewTitle": "Draft preview",
+    "draftBadge": "Draft",
+    "previewBanner": "Draft preview, not public",
+    "previewOpenPublished": "Open the published page",
+    "previewSignIn": "Sign in as an operator to preview this draft.",
+    "previewSignInAction": "Sign in",
+    "notFound": "This page does not exist or is not published.",
+    "loadError": "The page could not be loaded.",
+    "empty": "This page has no content yet."
   },
   "errors": {
     "title": "Something went wrong",

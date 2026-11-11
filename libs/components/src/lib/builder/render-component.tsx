@@ -126,8 +126,8 @@ export function renderComponent(
 
 /** A page's stored content: the component tree, the CSS rules and the compiled CSS. */
 export type PageContent = {
-  /** The root's children. */
-  components: ComponentJSON[];
+  /** The root's children, stored opaquely by the backend; every node is sanitized before it renders. */
+  components: readonly unknown[];
   /** The editor's CSS rules; compiled when `css` is missing. */
   styles?: unknown[];
   /** The compiled CSS the editor saved. */
@@ -150,7 +150,9 @@ export function renderPageContent(
   options: RenderPageContentOptions
 ): ReactNode {
   if (!content) return null;
-  const components = Array.isArray(content.components) ? content.components : [];
+  const components = Array.isArray(content.components)
+    ? (content.components as ComponentJSON[])
+    : [];
   const css = sanitizeCss(content.css || rulesToCss(content.styles));
 
   return (

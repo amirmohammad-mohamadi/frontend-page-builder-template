@@ -6,8 +6,8 @@
 /** Session cookie prefix; must differ from the admin app's, since both run on localhost in development. */
 export const AUTH_COOKIE_PREFIX = "web";
 
-/** Pages (without locale) that require a session. */
-export const PROTECTED_PATHS = ["/account"] as const;
+/** Pages (without locale) that require a session; `/preview` is the builder's draft preview. */
+export const PROTECTED_PATHS = ["/account", "/preview"] as const;
 
 /**
  * Where the backend exposes its auth operations. The BFF posts to these; the

@@ -1,5 +1,5 @@
 {
-  "$comment": "Loaded when tools/mock-api/data/pages.json does not exist yet. The component tree is GrapesJS component JSON (the root's children). Translatable texts are stored as one JSON object string keyed by locale inside the attribute. The attribute names used here (text, level, href) are placeholders: the block library defines the real trait names, so this seed only has to parse, not to render.",
+  "$comment": "Loaded when tools/mock-api/data/pages.json does not exist yet. The component tree is GrapesJS component JSON (the root's children). Translatable texts are stored as one JSON object string keyed by locale inside the attribute. Attribute names follow the block library (heading: text/level, text: html, button: label/href), so the page renders on the web app as soon as the mock starts.",
   "items": [
     {
       "id": 1,
@@ -29,14 +29,14 @@
               {
                 "type": "text",
                 "attributes": {
-                  "text": "{\"en\":\"We are a small team building tools that help people publish pages without writing code.\",\"fa\":\"ما تیم کوچکی هستیم که ابزارهایی می‌سازیم تا افراد بدون نوشتن کد صفحه منتشر کنند.\"}"
+                  "html": "{\"en\":\"We are a small team building tools that help people publish pages without writing code.\",\"fa\":\"ما تیم کوچکی هستیم که ابزارهایی می‌سازیم تا افراد بدون نوشتن کد صفحه منتشر کنند.\"}"
                 }
               },
               {
                 "type": "button",
                 "attributes": {
                   "href": "/contact",
-                  "text": "{\"en\":\"Get in touch\",\"fa\":\"با ما در تماس باشید\"}"
+                  "label": "{\"en\":\"Get in touch\",\"fa\":\"با ما در تماس باشید\"}"
                 }
               }
             ]
@@ -61,14 +61,14 @@
               {
                 "type": "text",
                 "attributes": {
-                  "text": "{\"en\":\"We are a small team building tools that help people publish pages without writing code.\",\"fa\":\"ما تیم کوچکی هستیم که ابزارهایی می‌سازیم تا افراد بدون نوشتن کد صفحه منتشر کنند.\"}"
+                  "html": "{\"en\":\"We are a small team building tools that help people publish pages without writing code.\",\"fa\":\"ما تیم کوچکی هستیم که ابزارهایی می‌سازیم تا افراد بدون نوشتن کد صفحه منتشر کنند.\"}"
                 }
               },
               {
                 "type": "button",
                 "attributes": {
                   "href": "/contact",
-                  "text": "{\"en\":\"Get in touch\",\"fa\":\"با ما در تماس باشید\"}"
+                  "label": "{\"en\":\"Get in touch\",\"fa\":\"با ما در تماس باشید\"}"
                 }
               }
             ]
