@@ -1,0 +1,12 @@
+{
+  "name": "dtos",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/dtos/src",
+  "projectType": "library",
+  "tags": ["type:dto"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

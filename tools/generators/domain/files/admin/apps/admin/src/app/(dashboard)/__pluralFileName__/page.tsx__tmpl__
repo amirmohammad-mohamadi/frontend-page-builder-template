@@ -1,0 +1,5 @@
+import { <%= pluralClassName %>Table } from "@/features/<%= pluralFileName %>/<%= pluralFileName %>-table";
+
+export default function <%= pluralClassName %>Page() {
+  return <<%= pluralClassName %>Table />;
+}

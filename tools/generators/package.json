@@ -1,0 +1,6 @@
+{
+  "name": "@frontend-page-builder-template/generators",
+  "version": "0.1.0",
+  "private": true,
+  "generators": "./generators.json"
+}

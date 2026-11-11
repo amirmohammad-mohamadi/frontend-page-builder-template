@@ -1,0 +1,9 @@
+{
+  "generators": {
+    "domain": {
+      "factory": "./domain/generator",
+      "schema": "./domain/schema.json",
+      "description": "Scaffold a domain across dtos, models, services and an admin list page."
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "common": {
+    "appName": "قالب",
+    "loading": "در حال بارگذاری…",
+    "retry": "تلاش دوباره",
+    "save": "ذخیره",
+    "cancel": "انصراف",
+    "delete": "حذف",
+    "back": "بازگشت",
+    "search": "جستجو",
+    "noResults": "هنوز چیزی اینجا نیست.",
+    "somethingWentWrong": "مشکلی پیش آمد. دوباره تلاش کنید.",
+    "skipToContent": "رفتن به محتوای اصلی",
+    "language": "زبان",
+    "theme": "پوسته",
+    "themeLight": "روشن",
+    "themeDark": "تیره",
+    "themeSystem": "سیستم"
+  },
+  "nav": {
+    "home": "خانه",
+    "examples": "نمونه‌ها",
+    "account": "حساب کاربری",
+    "signIn": "ورود",
+    "signOut": "خروج",
+    "signUp": "ساخت حساب"
+  },
+  "home": {
+    "title": "یک شروع تمیز",
+    "subtitle": "چندزبانه، با پوسته، با احراز هویت و متصل به یک لایهٴ سرویس تایپ‌شده. این صفحه را با صفحهٴ خودتان جایگزین کنید.",
+    "viewExamples": "مشاهدهٴ دامنهٴ نمونه",
+    "yourAccount": "حساب شما"
+  },
+  "auth": {
+    "signInTitle": "ورود",
+    "signInSubtitle": "ایمیل و گذرواژهٴ خود را وارد کنید.",
+    "signUpTitle": "ساخت حساب",
+    "signUpSubtitle": "یک نام، یک ایمیل و یک گذرواژه.",
+    "forgotTitle": "گذرواژه را فراموش کرده‌اید؟",
+    "forgotSubtitle": "پیوند بازنشانی را به ایمیل شما می‌فرستیم.",
+    "forgotSent": "اگر این ایمیل وجود داشته باشد، پیوند بازنشانی ارسال شد.",
+    "resetTitle": "گذرواژهٴ جدید انتخاب کنید",
+    "resetSubtitle": "گذرواژهٴ جدید حساب خود را وارد کنید.",
+    "resetToken": "کد بازنشانی",
+    "newPassword": "گذرواژهٴ جدید",
+    "submitReset": "ثبت گذرواژهٴ جدید",
+    "email": "ایمیل",
+    "password": "گذرواژه",
+    "passwordConfirmation": "تکرار گذرواژه",
+    "name": "نام و نام خانوادگی",
+    "remember": "مرا به خاطر بسپار",
+    "forgotLink": "فراموشی گذرواژه؟",
+    "noAccount": "هنوز حساب ندارید؟",
+    "haveAccount": "حساب دارید؟",
+    "submitSignIn": "ورود",
+    "submitSignUp": "ساخت حساب",
+    "submitForgot": "ارسال پیوند بازنشانی",
+    "showPassword": "نمایش گذرواژه",
+    "hidePassword": "پنهان کردن گذرواژه",
+    "signedOut": "از حساب خود خارج شدید.",
+    "sessionExpired": "نشست شما منقضی شده است. دوباره وارد شوید.",
+    "mockHint": "حساب API آزمایشی: {email} / {password}"
+  },
+  "account": {
+    "title": "حساب شما",
+    "subtitle": "این صفحه فقط با نشست فعال در دسترس است. داده‌ها از مسیر /api/auth/me می‌آیند.",
+    "name": "نام",
+    "email": "ایمیل",
+    "roles": "نقش‌ها",
+    "none": "هیچ"
+  },
+  "examples": {
+    "title": "نمونه‌ها",
+    "subtitle": "یک دامنهٴ مرجع که همهٴ لایه‌ها را به کار می‌گیرد. با npm run example:remove حذف می‌شود.",
+    "searchPlaceholder": "جستجوی نمونه‌ها",
+    "status": "وضعیت",
+    "statusAll": "همهٴ وضعیت‌ها",
+    "statusDraft": "پیش‌نویس",
+    "statusActive": "فعال",
+    "statusArchived": "بایگانی‌شده",
+    "empty": "نمونه‌ای مطابق پیدا نشد.",
+    "loadError": "نمونه‌ها بارگذاری نشدند.",
+    "notFound": "این نمونه وجود ندارد.",
+    "detailTitle": "نمونه",
+    "created": "ایجاد",
+    "pageOf": "صفحهٴ {page} از {total}",
+    "previous": "قبلی",
+    "next": "بعدی"
+  },
+  "errors": {
+    "title": "مشکلی پیش آمد",
+    "description": "خطای غیرمنتظره‌ای رخ داد. می‌توانید دوباره تلاش کنید یا به صفحهٴ اصلی برگردید.",
+    "notFoundTitle": "صفحه پیدا نشد",
+    "notFoundDescription": "صفحه‌ای که می‌خواهید وجود ندارد یا جابه‌جا شده است.",
+    "goHome": "رفتن به صفحهٴ اصلی"
+  },
+  "footer": {
+    "copyright": "© {year} {appName}. ساخته‌شده با قالب مونوریپوی فرانت‌اند."
+  }
+}

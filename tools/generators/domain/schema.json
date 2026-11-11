@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Domain",
+  "title": "Scaffold a domain",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Singular domain name, e.g. product or blog-post",
+      "$default": { "$source": "argv", "index": 0 },
+      "x-prompt": "What is the domain called (singular, e.g. product)?"
+    },
+    "plural": {
+      "type": "string",
+      "description": "Plural form used for the list endpoint and the admin page; defaults to name + s"
+    },
+    "endpoint": {
+      "type": "string",
+      "description": "Backend list path; defaults to /api/v1/<plural>"
+    },
+    "adminPage": {
+      "type": "boolean",
+      "description": "Also scaffold a read-only list page in the admin app",
+      "default": true
+    }
+  },
+  "required": ["name"]
+}

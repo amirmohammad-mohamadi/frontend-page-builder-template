@@ -1,0 +1,5 @@
+import type { IBaseModel } from "../base";
+
+export type I<%= className %>Model = IBaseModel & {
+  name: string;
+};

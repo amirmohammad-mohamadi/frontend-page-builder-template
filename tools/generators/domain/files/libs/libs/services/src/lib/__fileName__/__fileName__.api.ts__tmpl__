@@ -1,0 +1,20 @@
+import type { Create<%= className %>Dto, <%= className %>Dto, List<%= pluralClassName %>QueryDto, Update<%= className %>Dto } from "@dtos";
+import { buildUrlWithQuery, objectToSearchParams } from "@utils";
+import { apiClient } from "../shared/api-client";
+import { endpoints } from "../shared/endpoints";
+import type { NormalizedList } from "../shared/types";
+
+/** The only file in this domain that touches `apiClient`. */
+export const <%= propertyName %>Api = {
+  list: (query: Partial<List<%= pluralClassName %>QueryDto> = {}): Promise<NormalizedList<<%= className %>Dto>> =>
+    apiClient.getList<<%= className %>Dto>(buildUrlWithQuery(endpoints.<%= propertyName %>.list, objectToSearchParams(query).toString())),
+
+  get: (id: number | string): Promise<<%= className %>Dto> => apiClient.get<<%= className %>Dto>(endpoints.<%= propertyName %>.byId(id)),
+
+  create: (data: Create<%= className %>Dto): Promise<<%= className %>Dto> => apiClient.post<<%= className %>Dto>(endpoints.<%= propertyName %>.list, data),
+
+  update: (id: number | string, data: Update<%= className %>Dto): Promise<<%= className %>Dto> =>
+    apiClient.patch<<%= className %>Dto>(endpoints.<%= propertyName %>.byId(id), data),
+
+  remove: (id: number | string): Promise<void> => apiClient.delete<void>(endpoints.<%= propertyName %>.byId(id)),
+};

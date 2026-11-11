@@ -1,0 +1,9 @@
+import { BaseModel } from "../base";
+import type { I<%= className %>Model } from "./<%= fileName %>.interface";
+
+/** Typed getters over a <%= fileName %> record; pages read these, never raw fields. */
+export class <%= className %>Model extends BaseModel<I<%= className %>Model> {
+  getName(): string {
+    return this.props.name ?? "";
+  }
+}

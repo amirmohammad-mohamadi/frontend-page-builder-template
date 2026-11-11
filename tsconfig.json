@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    { "path": "./apps/web" },
+    { "path": "./apps/admin" },
+    { "path": "./libs/components" },
+    { "path": "./libs/models" },
+    { "path": "./libs/utils" },
+    { "path": "./libs/services" },
+    { "path": "./libs/enums" },
+    { "path": "./libs/dtos" },
+    { "path": "./libs/assets" }
+  ]
+}

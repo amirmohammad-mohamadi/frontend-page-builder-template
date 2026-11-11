@@ -1,0 +1,74 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "noEmit": true,
+    "composite": false,
+    "emitDeclarationOnly": false,
+    "declarationMap": false,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": "../..",
+    "paths": {
+      "@/*": ["apps/admin/src/*"],
+      "@utils": ["libs/utils/src/index.ts"],
+      "@utils/*": ["libs/utils/src/lib/*"],
+      "@components": ["libs/components/src/index.ts"],
+      "@components/*": ["libs/components/src/lib/*"],
+      "@models": ["libs/models/src/index.ts"],
+      "@models/*": ["libs/models/src/lib/*"],
+      "@dtos": ["libs/dtos/src/index.ts"],
+      "@dtos/*": ["libs/dtos/src/lib/*"],
+      "@services": ["libs/services/src/index.ts"],
+      "@services/*": ["libs/services/src/lib/*"],
+      "@assets": ["libs/assets/src/index.ts"],
+      "@assets/*": ["libs/assets/src/lib/*"],
+      "@enums": ["libs/enums/src/index.ts"],
+      "@enums/*": ["libs/enums/src/lib/*"]
+    },
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "../../types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".next",
+    "jest.config.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx"
+  ],
+  "references": [
+    {
+      "path": "../../libs/models"
+    },
+    {
+      "path": "../../libs/dtos"
+    },
+    {
+      "path": "../../libs/services"
+    },
+    {
+      "path": "../../libs/utils"
+    },
+    {
+      "path": "../../libs/components"
+    },
+    {
+      "path": "../../libs/assets"
+    }
+  ]
+}

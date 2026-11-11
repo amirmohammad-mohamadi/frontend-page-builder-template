@@ -1,0 +1,20 @@
+{
+  "ignorePaths": ["^tools/", "^package-lock\\.json$", "^\\.check-words\\.local$"],
+  "patterns": [
+    {
+      "pattern": "registry\\.[a-z0-9-]+\\.(pro|ir|local|internal)\\b",
+      "reason": "private registry host"
+    },
+    {
+      "pattern": "https?://(gitlab|jira|confluence|sentry|grafana)\\.[a-z0-9.-]+",
+      "reason": "internal service host"
+    },
+    {
+      "pattern": "\\b(staging|sandbox|prod|production)\\.[a-z0-9-]+\\.(com|pro|ir|net|org)\\b",
+      "reason": "environment hostname"
+    },
+    { "pattern": "console\\.log\\(", "reason": "debug logging" },
+    { "pattern": "TODO[- ]REMOVE", "reason": "temporary code" },
+    { "pattern": "Co-Authored-By", "reason": "attribution trailer" }
+  ]
+}

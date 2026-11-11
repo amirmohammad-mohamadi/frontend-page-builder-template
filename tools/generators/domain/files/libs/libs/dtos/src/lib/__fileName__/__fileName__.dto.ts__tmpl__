@@ -1,0 +1,29 @@
+import { z } from "zod";
+import { listQuerySchema } from "../shared/pagination.dto";
+
+/** A <%= fileName %> as the API returns it. Add the real fields here; the model and the forms derive from them. */
+export const <%= propertyName %>Schema = z.object({
+  id: z.union([z.number(), z.string()]),
+  name: z.string(),
+  created_at: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
+});
+
+export type <%= className %>Dto = z.infer<typeof <%= propertyName %>Schema>;
+
+/** The body of a create request; validated on the form and in the api layer. */
+export const create<%= className %>Schema = z.object({
+  name: z.string().trim().min(2).max(120),
+});
+
+export type Create<%= className %>Dto = z.infer<typeof create<%= className %>Schema>;
+
+/** The body of an update request: every create field, all optional. */
+export const update<%= className %>Schema = create<%= className %>Schema.partial();
+
+export type Update<%= className %>Dto = z.infer<typeof update<%= className %>Schema>;
+
+/** Query parameters of the list request. */
+export const list<%= pluralClassName %>QuerySchema = listQuerySchema;
+
+export type List<%= pluralClassName %>QueryDto = z.infer<typeof list<%= pluralClassName %>QuerySchema>;

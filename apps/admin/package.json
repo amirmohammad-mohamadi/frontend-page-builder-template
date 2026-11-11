@@ -1,0 +1,8 @@
+{
+  "name": "@frontend-page-builder-template/admin",
+  "version": "0.1.0",
+  "private": true,
+  "nx": {
+    "name": "admin"
+  }
+}
