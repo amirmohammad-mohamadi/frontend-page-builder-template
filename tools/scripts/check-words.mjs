@@ -2,8 +2,9 @@
  * Fails when tracked files contain text that must never ship in this
  * repository: hard-coded private hosts, leftover debugging, project-specific
  * names. Patterns come from `check-words.config.json` (committed) and from an
- * optional `--words a,b,c` argument or a `.check-words.local` file (one
- * pattern per line, not committed) for names a team wants to keep private.
+ * optional `--words a,b,c` argument or a `.check-words.local` file (one word
+ * per line, not committed; a line wrapped in slashes is a regular expression)
+ * for names a team wants to keep private.
  *
  *   node tools/scripts/check-words.mjs
  *   node tools/scripts/check-words.mjs --words "oldbrand,internal-host"
@@ -32,9 +33,13 @@ const patterns = [
     regex: new RegExp(p.pattern, "i"),
     reason: p.reason,
   })),
+  // A local entry wrapped in slashes (`/\brials?\b/`) is a regular expression; anything else is a literal word.
   ...extraWords.map((w) => ({
     source: w,
-    regex: new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
+    regex:
+      w.length > 2 && w.startsWith("/") && w.endsWith("/")
+        ? new RegExp(w.slice(1, -1), "i")
+        : new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
     reason: "forbidden word",
   })),
 ];
