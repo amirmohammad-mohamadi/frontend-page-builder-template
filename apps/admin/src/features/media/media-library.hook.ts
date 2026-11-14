@@ -61,9 +61,10 @@ export function useMediaLibrary() {
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+    // Copy first: the FileList is live and empties the moment the input is cleared.
+    const files = Array.from(event.target.files ?? []);
     event.target.value = "";
-    if (files) void uploadFiles(files);
+    if (files.length) void uploadFiles(files);
   };
 
   const handleDrop = (event: DragEvent<HTMLElement>) => {

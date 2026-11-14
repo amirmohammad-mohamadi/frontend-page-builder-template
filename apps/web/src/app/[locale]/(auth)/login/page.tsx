@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LoginForm } from "@/features/auth/login-form";
 
@@ -15,5 +16,10 @@ export async function generateMetadata({
 export default async function LoginPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <LoginForm />;
+  // The form reads `useSearchParams()`; the boundary keeps the page prerenderable.
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
 }

@@ -21,6 +21,9 @@ Static routes win over the catch-all in Next.js, so `/examples`, `/account`, `/l
 `/preview/...` are never shadowed by a page slug. Both routes inherit `app/[locale]/error.tsx` and `not-found.tsx`. There is deliberately no
 `loading.tsx` above them: a shared Suspense boundary would flush the shell before `notFound()`
 runs and turn every missing page into a 200.
+A static page whose client component reads `useSearchParams()` (login, signup, reset-password,
+examples) therefore wraps that component in its own `<Suspense>`, or `next build` refuses to
+prerender it.
 
 ### How rendering works
 

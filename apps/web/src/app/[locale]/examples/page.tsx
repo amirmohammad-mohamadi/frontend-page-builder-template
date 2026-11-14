@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ExamplesList } from "@/features/examples/examples-list";
 
@@ -15,5 +16,10 @@ export async function generateMetadata({
 export default async function ExamplesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <ExamplesList />;
+  // The form reads `useSearchParams()`; the boundary keeps the page prerenderable.
+  return (
+    <Suspense>
+      <ExamplesList />
+    </Suspense>
+  );
 }

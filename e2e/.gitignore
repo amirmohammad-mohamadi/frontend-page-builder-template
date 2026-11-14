@@ -1,0 +1,2 @@
+# Mock API state of the e2e run (see playwright.config.ts); never the dev state in tools/mock-api.
+.mock-state

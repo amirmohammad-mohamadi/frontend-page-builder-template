@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { waitForHydration } from "./support/auth";
 
 // Smoke tests of the `example` reference domain. `npm run example:remove` deletes this file.
 
@@ -13,6 +14,7 @@ test("web: examples list loads from the mock API", async ({ page }) => {
 test("admin: sign in, see the examples table, create and delete an entry", async ({ page }) => {
   await page.goto(`${ADMIN}/examples`);
   await expect(page).toHaveURL(/\/login\?next=/);
+  await waitForHydration(page);
   await page.getByLabel("Email").fill("admin@example.com");
   await page.getByLabel("Password", { exact: true }).fill("password");
   await page.getByRole("button", { name: "Sign in" }).click();

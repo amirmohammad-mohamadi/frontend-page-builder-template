@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { waitForHydration } from "./support/auth";
 
 const WEB = "http://localhost:3000";
 const ADMIN = "http://localhost:3001";
@@ -17,6 +18,7 @@ test.describe("web", () => {
   test("a protected page redirects to sign-in, and signing in opens it", async ({ page }) => {
     await page.goto(`${WEB}/en/account`);
     await expect(page).toHaveURL(/\/en\/login\?next=/);
+    await waitForHydration(page);
     await page.getByLabel("Email").fill("user@example.com");
     await page.getByLabel("Password", { exact: true }).fill("password");
     await page.getByRole("button", { name: "Sign in" }).click();
@@ -50,6 +52,7 @@ test.describe("admin", () => {
   test("sign in and reach the overview", async ({ page }) => {
     await page.goto(`${ADMIN}/settings`);
     await expect(page).toHaveURL(/\/login\?next=/);
+    await waitForHydration(page);
     await page.getByLabel("Email").fill("admin@example.com");
     await page.getByLabel("Password", { exact: true }).fill("password");
     await page.getByRole("button", { name: "Sign in" }).click();
