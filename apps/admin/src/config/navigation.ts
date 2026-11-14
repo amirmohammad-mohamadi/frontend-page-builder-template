@@ -1,4 +1,10 @@
-import { LayoutDashboardIcon, SettingsIcon, type LucideIcon } from "lucide-react";
+import {
+  FileTextIcon,
+  ImagesIcon,
+  LayoutDashboardIcon,
+  SettingsIcon,
+  type LucideIcon,
+} from "lucide-react";
 // example-domain:start
 import { ListIcon } from "lucide-react";
 // example-domain:end
@@ -18,6 +24,8 @@ export const NAV_MAIN: NavItem[] = [
   // example-domain:start
   { title: TEXTS.nav.examples, url: "/examples", icon: ListIcon },
   // example-domain:end
+  { title: TEXTS.nav.pages, url: "/pages", icon: FileTextIcon },
+  { title: TEXTS.nav.media, url: "/media", icon: ImagesIcon },
 ];
 
 export const NAV_SECONDARY: NavItem[] = [

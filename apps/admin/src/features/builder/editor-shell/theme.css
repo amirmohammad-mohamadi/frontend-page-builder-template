@@ -1,0 +1,442 @@
+/*
+ * GrapesJS core theme for the builder shell.
+ *
+ * grapes.min.css declares its --gjs-* variables on :root with a dark palette and a 15%-wide
+ * right column. They are redefined here on the shell root only, bound to the admin's design
+ * tokens, so the default views mounted in the shell's slots and the canvas tools follow the
+ * admin's light and dark themes (`.dark` redefines the tokens, these follow).
+ */
+.builder-editor-shell {
+  --gjs-main-font: inherit;
+  --gjs-main-color: var(--background);
+  --gjs-primary-color: var(--background);
+  --gjs-secondary-color: var(--foreground);
+  --gjs-tertiary-color: var(--primary);
+  --gjs-quaternary-color: var(--primary);
+  --gjs-font-color: var(--foreground);
+  --gjs-font-color-active: var(--foreground);
+  --gjs-main-dark-color: color-mix(in oklab, var(--foreground) 7%, transparent);
+  --gjs-secondary-dark-color: color-mix(in oklab, var(--foreground) 4%, transparent);
+  --gjs-main-light-color: color-mix(in oklab, var(--foreground) 6%, transparent);
+  --gjs-secondary-light-color: var(--muted-foreground);
+  --gjs-soft-light-color: color-mix(in oklab, var(--foreground) 2%, transparent);
+  --gjs-light-border: var(--border);
+  --gjs-arrow-color: var(--muted-foreground);
+  --gjs-dark-text-shadow: transparent;
+  /* No core panels: the canvas owns the whole container. */
+  --gjs-left-width: 0px;
+  --gjs-canvas-top: 0px;
+}
+
+/* The canvas area behind the frame, one step off the panels so the page edge is visible. */
+.builder-editor-shell .gjs-cv-canvas {
+  background-color: var(--muted);
+}
+
+/* Core's default views inherit the admin type scale inside the slots. */
+.builder-editor-shell [data-builder-slot] {
+  font-size: var(--gjs-font-size);
+}
+
+/* Core draws its field inputs borderless on a dark tint; give them the admin's input border. */
+.builder-editor-shell [data-builder-slot] .gjs-field {
+  border: 1px solid var(--input);
+  border-radius: calc(var(--radius) - 4px);
+}
+
+/* Fields may shrink to the column instead of pushing it wider. */
+.builder-editor-shell [data-builder-slot="traits"] .gjs-field-wrp {
+  min-width: 0;
+}
+
+/* The hand-built fields (`.pb-trait`) are too wide for core's label-beside-field row. */
+.builder-editor-shell .gjs-trt-trait--file,
+.builder-editor-shell .gjs-trt-trait--translatable {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.builder-editor-shell .gjs-trt-trait--file > .gjs-label-wrp,
+.builder-editor-shell .gjs-trt-trait--translatable > .gjs-label-wrp {
+  width: auto;
+  min-width: 0;
+}
+
+/* --- Hand-built trait fields (fields/custom-traits) --- */
+.builder-editor-shell .pb-trait {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+  font-size: 0.8125rem;
+}
+
+.builder-editor-shell .pb-trait-input,
+.builder-editor-shell .pb-trait-richtext {
+  width: 100%;
+  min-width: 0;
+  padding-block: 0.375rem;
+  padding-inline: 0.5rem;
+  border: 1px solid var(--input);
+  border-radius: calc(var(--radius) - 4px);
+  background-color: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  line-height: 1.4;
+}
+
+.builder-editor-shell textarea.pb-trait-input {
+  resize: vertical;
+}
+
+.builder-editor-shell .pb-trait-input:focus-visible,
+.builder-editor-shell .pb-trait-richtext:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.builder-editor-shell .pb-trait-richtext {
+  min-height: 5rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* The fallback text, shown greyed while the editing locale has none of its own. */
+.builder-editor-shell .pb-trait-richtext:empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted-foreground);
+}
+
+.builder-editor-shell .pb-trait-richtext a {
+  text-decoration: underline;
+}
+
+.builder-editor-shell .pb-trait-richtext ul {
+  padding-inline-start: 1.25rem;
+  list-style: disc;
+}
+
+.builder-editor-shell .pb-trait-toolbar {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.builder-editor-shell .pb-trait-button {
+  padding-block: 0.25rem;
+  padding-inline: 0.5rem;
+  border: 1px solid var(--input);
+  border-radius: calc(var(--radius) - 4px);
+  background-color: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.builder-editor-shell .pb-trait-button:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* The editing-locale badge on a translatable field, in the field's end corner. */
+.builder-editor-shell .pb-trait-locale {
+  position: absolute;
+  inset-block-start: -1.375rem;
+  inset-inline-end: 0;
+  padding-inline: 0.375rem;
+  border-radius: 999px;
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.builder-editor-shell .pb-trait-file {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.builder-editor-shell .pb-trait-file .pb-trait-input {
+  flex: 1 1 auto;
+}
+
+.builder-editor-shell .pb-trait-file-thumb {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 4px);
+  background-color: var(--muted);
+  background-position: center;
+  background-size: cover;
+}
+
+/*
+ * Preview: the shell hides its own columns and bars (core's preview only hides core panels),
+ * and draws its own exit button in place of core's icon-font eye (`gjs-off-prv`).
+ */
+.builder-editor-shell[data-preview] [data-shell-chrome],
+.builder-editor-shell .gjs-off-prv {
+  display: none !important;
+}
+
+/* Layers (core navigator ItemView): rows shrink to the column; a long name ends in an ellipsis. */
+.builder-editor-shell .gjs-layer {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.builder-editor-shell .gjs-layer-item {
+  padding-block: 0.25rem;
+  padding-inline: 0.5rem;
+}
+
+.builder-editor-shell .gjs-layer-item-left,
+.builder-editor-shell .gjs-layer-title-c,
+.builder-editor-shell .gjs-layer-title,
+.builder-editor-shell .gjs-layer-title-inn {
+  min-width: 0;
+}
+
+.builder-editor-shell .gjs-layer-item-left {
+  flex: 1 1 auto;
+}
+
+.builder-editor-shell .gjs-layer-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+}
+
+.builder-editor-shell .gjs-layer-item-right {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+
+.builder-editor-shell .gjs-layer-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.builder-editor-shell .gjs-layer.gjs-hovered > .gjs-layer-item {
+  background-color: var(--accent);
+}
+
+.builder-editor-shell .gjs-layer.gjs-selected > .gjs-layer-item {
+  background-color: color-mix(in oklab, var(--primary) 12%, transparent);
+  box-shadow: inset 2px 0 0 var(--primary);
+}
+
+/* The shell's lock toggle (layers-panel.hook.ts), sized like core's eye and move icons. */
+.builder-editor-shell .builder-layer-lock {
+  display: flex;
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.builder-editor-shell .builder-layer-lock svg {
+  width: 100%;
+  height: 100%;
+}
+
+.builder-editor-shell .gjs-layer-item:hover .builder-layer-lock,
+.builder-editor-shell .builder-layer-lock:focus-visible,
+.builder-editor-shell .builder-layer-lock[aria-pressed="true"] {
+  opacity: 1;
+}
+
+.builder-editor-shell .builder-layer-lock:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.builder-editor-shell .builder-layer--locked > .gjs-layer-item .gjs-layer-name {
+  color: var(--muted-foreground);
+}
+
+/* Selectors (core ClassTagsView): the class bar and state select above the style sectors. */
+.builder-editor-shell [data-builder-slot="selectors"] .gjs-clm-tags {
+  padding-block: 0.25rem 0.5rem;
+  padding-inline: 0.75rem;
+  border-block-end: 1px solid var(--border);
+}
+
+.builder-editor-shell .gjs-clm-header-label {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.builder-editor-shell #gjs-clm-add-tag,
+.builder-editor-shell .gjs-clm-tags-btn {
+  border: 1px solid var(--input);
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.builder-editor-shell #gjs-clm-add-tag:hover,
+.builder-editor-shell .gjs-clm-tags-btn:hover {
+  background-color: var(--accent);
+}
+
+.builder-editor-shell .gjs-clm-tag {
+  max-width: 100%;
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.builder-editor-shell .gjs-clm-sels-info {
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+}
+
+/* Style sectors (core SectorsView), headed like the Properties tab's categories. */
+.builder-editor-shell .gjs-sm-sector-title {
+  padding-block: 0.5rem;
+  padding-inline: 0.5rem 0.75rem;
+  border-block-end: 1px solid var(--border);
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.builder-editor-shell .gjs-sm-sector-title:hover {
+  color: var(--foreground);
+}
+
+.builder-editor-shell .gjs-sm-sector.gjs-sm-open {
+  border-block-end: 1px solid var(--border);
+}
+
+.builder-editor-shell .gjs-sm-properties {
+  padding-block: 0.5rem;
+  padding-inline: 0.25rem;
+}
+
+.builder-editor-shell .gjs-sm-label.gjs-color-warn {
+  color: color-mix(in oklab, var(--muted-foreground) 60%, var(--foreground));
+}
+
+.builder-editor-shell .gjs-sm-label:not(.gjs-four-color, .gjs-color-warn) {
+  color: var(--muted-foreground);
+}
+
+/* Core hard-codes white text and white tints for its dark theme; follow the admin instead. */
+.builder-editor-shell .gjs-sm-field input,
+.builder-editor-shell .gjs-sm-field select,
+.builder-editor-shell .gjs-clm-field input,
+.builder-editor-shell .gjs-clm-select select,
+.builder-editor-shell .gjs-field input,
+.builder-editor-shell .gjs-field select,
+.builder-editor-shell .gjs-field textarea {
+  color: var(--foreground);
+}
+
+.builder-editor-shell .gjs-radio-item input:checked + .gjs-radio-item-label,
+.builder-editor-shell .gjs-sm-radio:checked + label {
+  border-radius: calc(var(--radius) - 4px);
+  background-color: var(--background);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 15%, transparent);
+  color: var(--foreground);
+}
+
+.builder-editor-shell .gjs-sm-layer {
+  background-color: var(--gjs-main-light-color);
+}
+
+.builder-editor-shell .gjs-sm-layer.gjs-sm-active {
+  background-color: var(--accent);
+}
+
+.builder-editor-shell .gjs-sm-property .gjs-sm-btn {
+  border: 1px solid var(--input);
+  background-color: var(--background);
+  box-shadow: none;
+  color: var(--foreground);
+  text-shadow: none;
+  opacity: 1;
+}
+
+/*
+ * Properties tab: chrome for core's TraitsView (grapesjs 0.22.16 markup): a flex column of
+ * `[data-categories]` (one `.gjs-trait-category` per category) then `[data-no-categories]`.
+ */
+.builder-traits-panel [data-builder-slot="traits"] [data-no-categories]:not(:empty) {
+  padding-block: 0.5rem;
+}
+
+.builder-traits-panel .gjs-trait-category > [data-title] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block: 0.5rem;
+  padding-inline: 0.75rem;
+  border-block-end: 1px solid var(--border);
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-align: start;
+  text-transform: uppercase;
+}
+
+.builder-traits-panel .gjs-trait-category > [data-title]:hover {
+  color: var(--foreground);
+}
+
+.builder-traits-panel .gjs-trait-category > [data-title]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.builder-traits-panel .gjs-trait-category.gjs-open {
+  border-block-end: 0;
+}
+
+/* Core's caret is an icon-font glyph the shell does not load; draw a chevron instead. */
+.builder-traits-panel .gjs-trait-category .gjs-caret-icon {
+  flex-shrink: 0;
+  width: 0.375rem;
+  height: 0.375rem;
+  margin: 0;
+  border-block-end: 1.5px solid currentColor;
+  border-inline-end: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 150ms ease;
+}
+
+.builder-traits-panel .gjs-trait-category:not(.gjs-open) .gjs-caret-icon {
+  transform: rotate(-45deg);
+}
+
+/* Room for the translatable field's locale badge above it. */
+.builder-traits-panel .gjs-trt-trait--translatable {
+  padding-block-start: 0.5rem;
+}
+
+.builder-traits-panel .gjs-trt-trait--translatable > .gjs-label-wrp {
+  margin-block-end: 1.25rem;
+}
+
+/* A colour field refusing a typed value that is not a colour (`guardColorInput`). */
+.builder-traits-panel .gjs-field-color input[aria-invalid="true"] {
+  outline: 1px solid var(--destructive);
+  outline-offset: 1px;
+}

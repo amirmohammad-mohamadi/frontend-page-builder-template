@@ -30,6 +30,8 @@ export const env = createEnv(
      * for `studio`. Empty by default; set it in `.env`, never in a committed file.
      */
     NEXT_PUBLIC_GRAPESJS_LICENSE_KEY: z.string().trim().default(""),
+    /** The public web app's origin, where the builder's Preview opens `/<locale>/preview/<slug>`. */
+    NEXT_PUBLIC_WEB_APP_URL: z.url().default("http://localhost:3000"),
   }),
   {
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -38,5 +40,6 @@ export const env = createEnv(
     AUTH_COOKIE_SECURE: process.env.AUTH_COOKIE_SECURE,
     NEXT_PUBLIC_BUILDER_EDITOR: process.env.NEXT_PUBLIC_BUILDER_EDITOR,
     NEXT_PUBLIC_GRAPESJS_LICENSE_KEY: process.env.NEXT_PUBLIC_GRAPESJS_LICENSE_KEY,
+    NEXT_PUBLIC_WEB_APP_URL: process.env.NEXT_PUBLIC_WEB_APP_URL,
   }
 );
