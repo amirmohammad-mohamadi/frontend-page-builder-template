@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
-  "description": "Next.js + Nx frontend monorepo template: a public web app and an admin app sharing typed libraries, with a backend-agnostic services layer.",
+  "description": "Next.js + Nx page-builder template: a public web app and an admin app with a GrapesJS visual builder (Core by default, Studio SDK optional), sharing typed libraries and a backend-agnostic services layer.",
   "scripts": {
     "preinstall": "node -e \"if (!process.env.npm_config_user_agent?.includes('npm')) { console.error('Use npm. Yarn and pnpm are not supported in this workspace.'); process.exit(1); }\"",
     "web": "nx run web:dev",
@@ -90,7 +90,7 @@
     "@nx/react": "^22.7.6",
     "@playwright/test": "^1.61.1",
     "@swc-node/register": "^1.11.1",
-    "@swc/core": "^1.13.3",
+    "@swc/core": "~1.15.43",
     "@swc/helpers": "~0.5.11",
     "@swc/jest": "^0.2.39",
     "@tailwindcss/postcss": "^4.1.18",

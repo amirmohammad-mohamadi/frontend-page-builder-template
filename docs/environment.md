@@ -14,6 +14,19 @@ Every variable is read in one place per app, `apps/<app>/src/env.ts`, through `c
 | `NEXT_PUBLIC_BUILDER_EDITOR`       | admin   | page-builder editor: `core` (default, no key) or `studio` (GrapesJS Studio SDK)      |
 | `NEXT_PUBLIC_GRAPESJS_LICENSE_KEY` | admin   | your own Studio licence key from app.grapesjs.com; empty by default, never committed |
 
+See [studio-sdk.md](studio-sdk.md) for what the two builder variables do together.
+
+## Mock API
+
+`tools/mock-api/server.mjs` reads `process.env` directly (it is a dev tool, not an app):
+
+| Variable              | Default                   | Purpose                                  |
+| --------------------- | ------------------------- | ---------------------------------------- |
+| `MOCK_API_PORT`       | `4000`                    | port; `0` picks a free one and prints it |
+| `MOCK_API_DELAY_MS`   | `120`                     | artificial latency per request           |
+| `MOCK_API_STATE_DIR`  | `tools/mock-api`          | where `data/` and `uploads/` live        |
+| `MOCK_API_PUBLIC_URL` | `http://localhost:<port>` | origin used in upload URLs               |
+
 Rules:
 
 - `NEXT_PUBLIC_*` ships to the browser and is inlined at build time. Never a secret, and changing it needs a rebuild.

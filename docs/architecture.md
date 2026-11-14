@@ -22,6 +22,10 @@ apps/*/src/features/<feature>/*.tsx        rendering only
 
 Both apps have the same server-side auth plumbing through `createAuthServer` and the same client-side session query through `useCurrentUser`.
 
+## Page builder
+
+The admin app edits pages with GrapesJS (Core by default, the Studio SDK optionally) at `/builder/[id]`; the web app renders published pages at `/[locale]/[...slug]` and drafts at `/[locale]/preview/[...slug]`. Blocks are React components with field definitions in `libs/components/src/lib/builder` (`@components/builder`), shared by the editor canvas and the site. Pages and media follow the same layers as every domain (`libs/dtos`, `libs/models`, `libs/services` `page` and `media`). See [builder.md](builder.md), [studio-sdk.md](studio-sdk.md) and [pages-api.md](pages-api.md).
+
 ## Where state lives
 
 - Server data: TanStack Query, through `@services` hooks only.

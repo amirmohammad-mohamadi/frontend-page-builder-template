@@ -39,7 +39,7 @@ logical (`ms-*`, `pe-*`, `start-*`), errors go through `captureError`, never `co
 own panels, no licence. `studio` mounts `@grapesjs/studio-sdk` with the project's
 `NEXT_PUBLIC_GRAPESJS_LICENSE_KEY`. Without a key the Studio host is mounted only on localhost
 (the SDK's development mode); anywhere else `resolveEditorKind` falls back to Core and the
-toolbar shows a notice. Both editors install the same plugin, render the canvas with the same
+builder shows a notice under its toolbar. Both editors install the same plugin, render the canvas with the same
 renderer and save the same format, so a page is editable in either.
 
 **Import restriction.** Only `src/features/builder/studio-host.tsx` and
