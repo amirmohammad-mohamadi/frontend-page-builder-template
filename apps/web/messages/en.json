@@ -24,7 +24,8 @@
     "account": "Account",
     "signIn": "Sign in",
     "signOut": "Sign out",
-    "signUp": "Create account"
+    "signUp": "Create account",
+    "main": "Main"
   },
   "home": {
     "title": "A clean start",
@@ -86,7 +87,8 @@
     "created": "Created",
     "pageOf": "Page {page} of {total}",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "pagination": "Pagination"
   },
   "pages": {
     "previewTitle": "Draft preview",

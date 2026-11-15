@@ -100,7 +100,7 @@ export function ExamplesList() {
       )}
 
       {paginate && paginate.getLastPage() > 1 ? (
-        <nav className="flex items-center justify-between" aria-label="Pagination">
+        <nav className="flex items-center justify-between" aria-label={t("pagination")}>
           <Button
             variant="outline"
             disabled={!paginate.getHasPreviousPage()}

@@ -24,7 +24,8 @@
     "account": "حساب کاربری",
     "signIn": "ورود",
     "signOut": "خروج",
-    "signUp": "ساخت حساب"
+    "signUp": "ساخت حساب",
+    "main": "اصلی"
   },
   "home": {
     "title": "یک شروع تمیز",
@@ -86,7 +87,8 @@
     "created": "ایجاد",
     "pageOf": "صفحهٴ {page} از {total}",
     "previous": "قبلی",
-    "next": "بعدی"
+    "next": "بعدی",
+    "pagination": "صفحه‌بندی"
   },
   "pages": {
     "previewTitle": "پیش‌نمایش پیش‌نویس",
