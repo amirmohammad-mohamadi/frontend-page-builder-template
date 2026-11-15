@@ -1,7 +1,7 @@
 ---
 description: Push the in-scope commits and open or update a draft pull request, stopping on any divergence
 argument-hint: [optional PR title]
-allowed-tools: Bash(git status *), Bash(git log *), Bash(git fetch *), Bash(git push *), Bash(git rev-list *), Bash(gh pr *), Read
+allowed-tools: Bash(git status *), Bash(git log *), Bash(git fetch *), Bash(git push *), Bash(git rev-list *), Bash(gh pr create *), Bash(gh pr view *), Bash(gh pr edit *), Bash(gh pr list *), Bash(gh pr status*), Bash(gh pr checks *), Read
 disable-model-invocation: true
 ---
 

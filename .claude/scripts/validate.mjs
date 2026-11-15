@@ -29,7 +29,9 @@ const EOL = String.fromCharCode(10);
 const argv = process.argv.slice(2);
 const wordsIndex = argv.indexOf("--words");
 const wordsFile = wordsIndex === -1 ? null : argv[wordsIndex + 1];
-const positional = argv.filter((a, i) => a !== "--words" && i !== wordsIndex + 1);
+const positional = argv.filter(
+  (a, i) => a !== "--words" && (wordsIndex === -1 || i !== wordsIndex + 1)
+);
 const root = resolve(positional[0] ?? join(fileURLToPath(new URL(".", import.meta.url)), ".."));
 const problems = [];
 const inventory = [];
@@ -125,7 +127,9 @@ function walk(dir, filter = () => true) {
 }
 
 /** Minimal YAML frontmatter reader: scalars, inline lists, block lists. */
-function frontmatter(text) {
+function frontmatter(raw) {
+  // A checkout on Windows without `.gitattributes` has CRLF endings; parse them like LF.
+  const text = raw.replace(/\r\n?/g, EOL);
   if (!text.startsWith("---")) return { data: null, body: text };
   const end = text.indexOf(EOL + "---", 3);
   if (end === -1) return { data: null, body: text };

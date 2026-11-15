@@ -33,6 +33,8 @@ const NO_EDIT = [
   /(^|\/)(dist|coverage|\.next|\.nx|\.turbo|playwright-report|test-results)\//,
   /(^|\/)(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb?)$/,
 ];
+// The guard's own files: editing them is legitimate maintenance, but never silent.
+const ASK_EDIT = [/(^|\/)\.claude\/hooks\/[^/]+$/, /(^|\/)\.claude\/settings(\.local)?\.json$/];
 
 guard(() => {
   const payload = readPayload();
@@ -67,6 +69,12 @@ guard(() => {
     decide(
       "deny",
       `${file} is generated or vendored. Change the source that produces it (package.json, the build, the generator) instead of editing it by hand.`
+    );
+  }
+  if (isEdit && ASK_EDIT.some((re) => re.test(file))) {
+    decide(
+      "ask",
+      `${file} is part of the Claude Code guard itself. Confirm the change is intended.`
     );
   }
 });

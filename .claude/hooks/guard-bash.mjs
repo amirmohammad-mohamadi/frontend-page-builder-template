@@ -5,17 +5,19 @@
  * Enforces the mechanical part of `rules/general/git-workflow.md` and
  * `rules/general/secrets-and-environment.md`, and refuses the handful of shell commands that
  * destroy work:
- *   deny  force pushes (flag or `+ref` refspec), hook bypasses, history rewrites, recursive
- *         deletes of the repository, home or root, reading secret files through the shell,
- *         commit messages with a body, a trailing period or an attribution line;
- *   ask   amends, hard resets, discarding the working tree, force branch deletion, stash drops,
- *         publishing a package, deleting or archiving a repository.
+ *   deny  force pushes (flag, `+ref` refspec or `--mirror`), hook bypasses, history rewrites,
+ *         recursive deletes of the repository, home or root (POSIX, PowerShell and cmd forms),
+ *         reading or sourcing secret files through the shell, commit messages with a body, a
+ *         trailing period or an attribution line;
+ *   ask   remote branch deletion, amends, hard resets, discarding the working tree, force branch
+ *         deletion, stash drops, publishing a package, deleting or archiving a repository.
  *
  * A command line is split on `&&`, `||`, `;` and `|` and every simple command is judged on its
  * own, so two commits chained on one line are two one-line messages, not one multi-line one.
  * Quoted strings are blanked before the destructive-command checks, so a commit message that
- * mentions `--no-verify` is not refused. The hook inspects text only; it cannot see what a
- * script file does.
+ * mentions `--no-verify` is not refused. The hook inspects text only: it cannot see what a
+ * script file, an interpreter one-liner or a quoted path does, and it fails open on its own
+ * errors. Permission prompts remain the primary safeguard.
  */
 import { decide, guard, readPayload } from "./_lib.mjs";
 
@@ -52,51 +54,77 @@ function splitSegments(command) {
 
 /** True when `re` appears as a whole flag token in the segment. */
 const hasFlag = (seg, re) => new RegExp(`(?:^|\\s)${re.source}(?=\\s|$)`).test(seg);
-/** Matches `git <sub>`, allowing global options such as `-c key=value` or `-C dir` before the subcommand. */
-const gitCmd = (sub) => new RegExp(`^\\s*git\\s+(?:(?:-c|-C)\\s+\\S+\\s+|-\\S+\\s+)*(?:${sub})\\b`);
+/**
+ * Matches `git <sub>` however git is invoked: with `VAR=value` prefixes, `command`, a path or
+ * `.exe`, and global options such as `-c key=value` or `-C dir` before the subcommand.
+ */
+const gitCmd = (sub) =>
+  new RegExp(
+    `^\\s*(?:\\w+=\\S*\\s+)*(?:command\\s+)?(?:\\S*[\\\\/])?git(?:\\.exe)?\\s+(?:(?:-c|-C)\\s+\\S+\\s+|-\\S+\\s+)*(?:${sub})\\b`
+  );
 const ROOT_VAR = "\\$\\{?(?:CLAUDE_PROJECT_DIR|HOME|PWD)\\}?";
+const ROOT_LIKE = new RegExp(
+  `^(?:\\/|~\\/?|\\.{1,2}\\/?|\\.{1,2}\\\\?|\\*|\\.\\/?\\*|\\.\\.\\/\\*|${ROOT_VAR}\\/?\\*?|[A-Za-z]:[\\\\/]?\\*?)$`
+);
+const SECRET_TOKEN = /(^|[\\/])\.env(\.[\w.*?-]*)?[*?]*$/i;
+const SECRET_EXAMPLE = /\.env\.(example|sample|template)$/i;
+const isSecretToken = (t) =>
+  (SECRET_TOKEN.test(t) && !SECRET_EXAMPLE.test(t)) ||
+  /(^|[\\/])\.check-words\.local$/i.test(t) ||
+  /\.(pem|key|p12|pfx)$/i.test(t) ||
+  /(^|[\\/])id_(rsa|ed25519|ecdsa)$/i.test(t);
 
 function isForcePush(seg) {
   if (!gitCmd("push").test(seg)) return false;
   return (
     hasFlag(seg, /--force(?:-with-lease|-if-includes)?(?:=\S+)?/) ||
+    hasFlag(seg, /--mirror/) ||
     hasFlag(seg, /-[a-zA-Z]*f[a-zA-Z]*/) ||
     /\s\+\S+/.test(seg)
   );
 }
 
-function isRecursiveDeleteOfEverything(seg, original) {
-  const m = seg.match(/^\s*rm\s+(.*)$/);
-  if (!m) return false;
-  const tokens = m[1].split(/\s+/).filter(Boolean);
-  const flags = tokens.filter((t) => t.startsWith("-"));
-  const targets = tokens.filter((t) => !t.startsWith("-"));
-  const recursive = flags.some(
-    (f) => f === "--recursive" || f === "-R" || /^-[a-zA-Z]*r[a-zA-Z]*$/.test(f)
-  );
-  const force = flags.some((f) => f === "--force" || /^-[a-zA-Z]*f[a-zA-Z]*$/.test(f));
-  if (!recursive || !force) return false;
-  const rootLike = new RegExp(
-    `^(?:\\/|~\\/?|\\.{1,2}\\/?|\\*|${ROOT_VAR}\\/?\\*?|[A-Za-z]:[\\\\/]?)$`
-  );
-  if (targets.some((t) => rootLike.test(t))) return true;
-  // Quoted targets were blanked; look at the original text for a quoted root variable.
-  return new RegExp(`\\brm\\s[^|;&]*["']${ROOT_VAR}\\/?["']`).test(original);
+/** `git push --delete`, `-d` or an empty-source refspec (`:branch`) removes a remote branch. */
+function deletesRemoteRef(seg) {
+  return gitCmd("push").test(seg) && (hasFlag(seg, /--delete|-d/) || /\s:\S+/.test(seg));
 }
 
+/** Recursive, forced deletion of a root-like target in POSIX, PowerShell or cmd syntax. */
+function isRecursiveDeleteOfEverything(seg, original) {
+  const posix = seg.match(/^\s*rm\s+(.*)$/);
+  const pwsh = seg.match(/^\s*(?:Remove-Item|ri|rmdir|rd|del|erase)\s+(.*)$/i);
+  if (/^\s*find\s+(?:\/|~\/?|\.{1,2}\/?|\*)\s[^]*-delete\b/.test(seg)) return true;
+  if (!posix && !pwsh) return false;
+  const tokens = (posix ?? pwsh)[1].split(/\s+/).filter(Boolean);
+  // A flag starts with `-`, or is a cmd switch such as `/s`; a bare `/` is the root, a target.
+  const isFlag = (t) => /^-/.test(t) || /^\/[a-z]$/i.test(t);
+  const flags = tokens.filter(isFlag);
+  const targets = tokens.filter((t) => !isFlag(t));
+  const recursive = flags.some(
+    (f) =>
+      /^(--recursive|-R|-Recurse|-r(ecurse)?|\/s)$/i.test(f) || /^-[a-zA-Z]*r[a-zA-Z]*$/.test(f)
+  );
+  const force = flags.some(
+    (f) => /^(--force|-Force|\/q)$/i.test(f) || /^-[a-zA-Z]*f[a-zA-Z]*$/.test(f)
+  );
+  if (!recursive || !force) return false;
+  if (targets.some((t) => ROOT_LIKE.test(t))) return true;
+  // Quoted targets were blanked; look at the original text for a quoted root variable.
+  return new RegExp(
+    `\\b(?:rm|Remove-Item|ri|rd|rmdir|del)\\s[^|;&]*["']${ROOT_VAR}\\/?["']`,
+    "i"
+  ).test(original);
+}
+
+/** Shell readers, copiers, searchers and sourcing of a secret file, plus `--env-file` loading. */
 function readsSecretFile(seg) {
+  if (/--env-file[= ]\S*\.env(?!\.example)/i.test(seg)) return true;
   const reader =
-    /^\s*(?:cat|less|more|head|tail|bat|type|Get-Content|gc|strings|xxd|base64)\s+(.*)$/i.exec(seg);
-  if (!reader) return false;
-  return reader[1]
-    .split(/\s+/)
-    .some(
-      (t) =>
-        (/(^|[\\/])\.env(\.[\w.-]+)?$/i.test(t) && !/\.env\.(example|sample|template)$/i.test(t)) ||
-        /(^|[\\/])\.check-words\.local$/i.test(t) ||
-        /\.(pem|key|p12|pfx)$/i.test(t) ||
-        /(^|[\\/])id_(rsa|ed25519|ecdsa)$/i.test(t)
+    /^\s*(?:cat|less|more|head|tail|bat|type|Get-Content|gc|strings|xxd|od|hexdump|nl|tac|base64|grep|egrep|fgrep|rg|sed|awk|cut|sort|uniq|diff|cmp|cp|copy|Copy-Item|cpi|mv|move|Move-Item|Select-String|sls|findstr|Import-Csv|source|\.)\s+(.*)$/i.exec(
+      seg
     );
+  if (!reader) return false;
+  return reader[1].split(/\s+/).some(isSecretToken);
 }
 
 /** Returns the reason a `git commit` segment is refused, or null. Reads messages from the original segment. */
@@ -164,6 +192,7 @@ const DENY = [
 ];
 
 const ASK = [
+  [(s) => deletesRemoteRef(s), "this deletes a branch on the remote."],
   [
     (s) => gitCmd("commit").test(s) && hasFlag(s, /--amend/),
     "amending a commit rewrites it; confirm it was never pushed.",
@@ -181,6 +210,10 @@ const ASK = [
       gitCmd("branch").test(s) &&
       (hasFlag(s, /-D/) || (hasFlag(s, /--delete/) && hasFlag(s, /--force/))),
     "force-deleting a branch loses unmerged commits.",
+  ],
+  [
+    (s) => gitCmd("update-ref").test(s),
+    "rewriting a ref by hand bypasses the normal history checks.",
   ],
   [
     (s) => gitCmd("stash").test(s) && /\bstash\s+(drop|clear)\b/.test(s),
