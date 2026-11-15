@@ -30,8 +30,9 @@ test-results
 .DS_Store
 Thumbs.db
 
-# agent scratch space
-.claude/
+# Claude Code: the shared configuration under .claude/ is tracked; personal files are not
+.claude/settings.local.json
+.claude/launch.json
 
 # machine-local word gate list (see tools/scripts/check-words.mjs)
 .check-words.local

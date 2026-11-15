@@ -21,6 +21,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx nx sync:check
+      - run: npm run check:claude
       - run: npm run check:words
       - run: npm run format:check
       - run: npm run lint
