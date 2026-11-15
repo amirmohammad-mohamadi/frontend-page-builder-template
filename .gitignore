@@ -17,10 +17,9 @@ coverage
 playwright-report
 test-results
 
-# environment
-.env
-.env.local
-.env.*.local
+# environment: every variant except the committed example
+.env*
+!.env.example
 
 # editors and OS
 .idea
